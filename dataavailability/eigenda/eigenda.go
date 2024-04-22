@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/0xPolygonHermez/zkevm-node/log"
 	"github.com/Layr-Labs/eigenda/api/grpc/disperser"
 	"github.com/Layr-Labs/eigenda/encoding/utils/codec"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rlp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -77,6 +77,7 @@ func (m EigenDA) GetSequence(ctx context.Context, batchHashes []common.Hash, dat
 }
 
 func (m EigenDA) PostSequence(ctx context.Context, batchesData [][]byte) ([]byte, error) {
+	log.Debug("Sending sequence to EigenDA", "batches", len(batchesData))
 	config := &tls.Config{}
 	credential := credentials.NewTLS(config)
 	dialOptions := []grpc.DialOption{grpc.WithTransportCredentials(credential)}

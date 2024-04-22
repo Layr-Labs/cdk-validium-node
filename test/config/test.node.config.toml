@@ -2,7 +2,7 @@ IsTrustedSequencer = true
 
 [EigenDA]
 	StatusQueryTimeoutSeconds = 500
-	StatusQueryRetryIntervalSeconds = 1
+	StatusQueryRetryIntervalSeconds = 10
 	RPC = "disperser-holesky.eigenda.xyz:443"
 	
 [Log]
