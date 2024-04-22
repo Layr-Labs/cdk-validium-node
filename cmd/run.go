@@ -291,7 +291,6 @@ func runMigrations(c db.Config, name string) {
 }
 
 func newEtherman(c config.Config, st *state.State) (*etherman.Client, error) {
-	println("newEtherman ", fmt.Sprintf("%+v", c.Etherman))
 	ethman, err := etherman.NewClient(c.Etherman, c.NetworkConfig.L1Config, nil)
 	if err != nil {
 		return nil, err
@@ -610,7 +609,6 @@ func newState(ctx context.Context, c *config.Config, etherman *etherman.Client, 
 	}
 	log.Infof("Starting L1InfoRoot: %v", l1inforoot.String())
 
-	println("rollup genesis number: ", c.NetworkConfig.Genesis.RollupBlockNumber)
 	forkIDIntervals, err := forkIDIntervals(ctx, st, etherman, c.NetworkConfig.Genesis.RollupBlockNumber)
 	if err != nil {
 		log.Fatal("error getting forkIDs. Error: ", err)

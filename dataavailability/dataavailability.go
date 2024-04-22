@@ -60,7 +60,6 @@ func (d *DataAvailability) PostSequence(ctx context.Context, sequences []types.S
 // 2. From Sequencer
 // 3. From DA backend
 func (d *DataAvailability) GetBatchL2Data(batchNums []uint64, batchHashes []common.Hash, dataAvailabilityMessage []byte) ([][]byte, error) {
-	println("Getting batch data")
 	if len(batchNums) != len(batchHashes) {
 		return nil, fmt.Errorf("invalid L2 batch data retrieval arguments, %d != %d", len(batchNums), len(batchHashes))
 	}
