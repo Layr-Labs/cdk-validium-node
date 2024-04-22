@@ -60,6 +60,7 @@ func (d *DataAvailability) PostSequence(ctx context.Context, sequences []types.S
 // 2. From Sequencer
 // 3. From DA backend
 func (d *DataAvailability) GetBatchL2Data(batchNums []uint64, batchHashes []common.Hash, dataAvailabilityMessage []byte) ([][]byte, error) {
+	println("Getting batch data")
 	if len(batchNums) != len(batchHashes) {
 		return nil, fmt.Errorf("invalid L2 batch data retrieval arguments, %d != %d", len(batchNums), len(batchHashes))
 	}
@@ -113,7 +114,7 @@ func (d *DataAvailability) trustedSequencerData(batchNums []uint64, expectedHash
 		return nil, fmt.Errorf("invalid arguments, len of batch numbers does not equal length of expected hashes: %d != %d",
 			len(batchNums), len(expectedHashes))
 	}
-	nums := make([]*big.Int, 0, len(batchNums))
+	var nums []*big.Int
 	for _, n := range batchNums {
 		nums = append(nums, new(big.Int).SetUint64(n))
 	}
@@ -124,7 +125,7 @@ func (d *DataAvailability) trustedSequencerData(batchNums []uint64, expectedHash
 	if len(batchData) != len(batchNums) {
 		return nil, fmt.Errorf("missing batch data, expected %d, got %d", len(batchNums), len(batchData))
 	}
-	result := make([][]byte, 0, len(batchNums))
+	var result [][]byte
 	for i := 0; i < len(batchNums); i++ {
 		number := batchNums[i]
 		batch := batchData[i]
