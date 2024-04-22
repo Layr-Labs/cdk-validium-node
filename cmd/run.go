@@ -328,7 +328,6 @@ func newDataAvailability(c config.Config, st *state.State, etherman *etherman.Cl
 		return nil, fmt.Errorf("error getting data availability protocol name: %v", err)
 	}
 	var daBackend dataavailability.DABackender
-	println("protocol name: ", daProtocolName)
 	switch daProtocolName {
 	case string(dataavailability.DataAvailabilityCommittee):
 		var (
@@ -357,17 +356,8 @@ func newDataAvailability(c config.Config, st *state.State, etherman *etherman.Cl
 		}
 
 	case string(dataavailability.EigenDA):
-		// dacAddr, err := etherman.GetDAProtocolAddr()
-		// if err != nil {
-		// 	return nil, fmt.Errorf("error getting trusted sequencer URI. Error: %v", err)
-		// }
-
 		daBackend = eigenda.EigenDA{
-			Config: eigenda.Config{
-				StatusQueryTimeout:       time.Second * 500,
-				RPC:                      "disperser-holesky.eigenda.xyz:443",
-				StatusQueryRetryInterval: time.Second * 1,
-			},
+			Config: c.EigenDA,
 		}
 
 	default:

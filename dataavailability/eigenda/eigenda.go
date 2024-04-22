@@ -116,9 +116,9 @@ func (m EigenDA) PostSequence(ctx context.Context, batchesData [][]byte) ([]byte
 	base64RequestID := base64.StdEncoding.EncodeToString(disperseRes.RequestId)
 
 	var statusRes *disperser.BlobStatusReply
-	timeoutTime := time.Now().Add(m.StatusQueryTimeout)
+	timeoutTime := time.Now().Add(time.Duration(m.StatusQueryTimeoutSeconds) * time.Second)
 	// Wait before first status check
-	time.Sleep(m.StatusQueryRetryInterval)
+	time.Sleep(time.Duration(m.StatusQueryRetryIntervalSeconds) * time.Second)
 
 	// Poll for blob confirmation until timeout
 	for time.Now().Before(timeoutTime) {
@@ -149,7 +149,7 @@ func (m EigenDA) PostSequence(ctx context.Context, batchesData [][]byte) ([]byte
 			return nil, fmt.Errorf("EigenDA blob dispersal failed in processing with reply status %d", statusRes.Status)
 		}
 
-		time.Sleep(m.StatusQueryRetryInterval)
+		time.Sleep(time.Duration(m.StatusQueryRetryIntervalSeconds) * time.Second)
 	}
 	return nil, fmt.Errorf("timed out getting EigenDA status for dispersed blob key: %s", base64RequestID)
 

@@ -9,6 +9,7 @@ import (
 
 	"github.com/0xPolygonHermez/zkevm-node/aggregator"
 	"github.com/0xPolygonHermez/zkevm-node/config/types"
+	"github.com/0xPolygonHermez/zkevm-node/dataavailability/eigenda"
 	"github.com/0xPolygonHermez/zkevm-node/db"
 	"github.com/0xPolygonHermez/zkevm-node/etherman"
 	"github.com/0xPolygonHermez/zkevm-node/ethtxmanager"
@@ -92,6 +93,8 @@ type Config struct {
 	Etherman etherman.Config
 	// Configuration for ethereum transaction manager
 	EthTxManager ethtxmanager.Config
+	// Configuration for EigenDA
+	EigenDA eigenda.Config
 	// Pool service configuration
 	Pool pool.Config
 	// Configuration for RPC service. THis one offers a extended Ethereum JSON-RPC API interface to interact with the node
