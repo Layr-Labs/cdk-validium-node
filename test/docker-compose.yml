@@ -454,7 +454,7 @@ services:
 
   zkevm-mock-l1-network:
     platform: linux/amd64
-    image: hermeznetwork/geth-cdk-contracts:feed
+    image: hermeznetwork/geth-zkevm-contracts:42069
     pull_policy: if_not_present
     ports:
       - 8545:8545

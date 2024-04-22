@@ -1,5 +1,10 @@
 IsTrustedSequencer = true
 
+[EigenDA]
+	StatusQueryTimeoutSeconds = 500
+	StatusQueryRetryIntervalSeconds = 1
+	RPC = "disperser-holesky.eigenda.xyz:443"
+	
 [Log]
 Environment = "development" # "production" or "development"
 Level = "debug"
