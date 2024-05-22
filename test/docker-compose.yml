@@ -253,6 +253,22 @@ services:
       - "-c"
       - "/app/zkevm-node run --network custom --custom-network-file /app/genesis.json --cfg /app/config.toml --components eth-tx-manager"
 
+  alt-da-eigenda-sidecar:
+    container_name: alt-da-eigenda-sidecar
+    image: eigenda-sidecar
+    environment:
+      - EIGEN_PLASMA_SERVER_ADDR=0.0.0.0
+      - EIGEN_PLASMA_SERVER_PORT=4242
+      - EIGEN_PLASMA_SERVER_EIGENDA_KZG_G1_PATH=/app/g1.point
+      - EIGEN_PLASMA_SERVER_EIGENDA_G2_TAU_PATH=/app/g2.point.powerOf2
+      - EIGEN_PLASMA_SERVER_EIGENDA_CACHE_PATH=SRSTables
+      - EIGEN_PLASMA_SERVER_EIGENDA_RPC=disperser-holesky.eigenda.xyz:443
+      - EIGEN_PLASMA_SERVER_EIGENDA_GRPC_USE_TLS=true
+      - EIGEN_PLASMA_SERVER_EIGENDA_STATUS_QUERY_TIMEOUT=45m
+      - EIGEN_PLASMA_SERVER_EIGENDA_STATUS_QUERY_INTERVAL=10s
+    ports:
+      - 4242:4242
+
   zkevm-eth-tx-manager-v1tov2:
     container_name: zkevm-eth-tx-manager-v1tov2
     image: zkevm-node
