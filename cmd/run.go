@@ -21,6 +21,7 @@ import (
 	"github.com/0xPolygonHermez/zkevm-node/config"
 	"github.com/0xPolygonHermez/zkevm-node/dataavailability"
 	"github.com/0xPolygonHermez/zkevm-node/dataavailability/datacommittee"
+	"github.com/0xPolygonHermez/zkevm-node/dataavailability/eigenda"
 	"github.com/0xPolygonHermez/zkevm-node/db"
 	"github.com/0xPolygonHermez/zkevm-node/etherman"
 	"github.com/0xPolygonHermez/zkevm-node/ethtxmanager"
@@ -352,6 +353,12 @@ func newDataAvailability(c config.Config, st *state.State, etherman *etherman.Cl
 		if err != nil {
 			return nil, err
 		}
+
+	case string(dataavailability.EigenDA):
+		daBackend = eigenda.EigenDA{
+			Config: c.EigenDA,
+		}
+
 	default:
 		return nil, fmt.Errorf("unexpected / unsupported DA protocol: %s", daProtocolName)
 	}

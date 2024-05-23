@@ -1,11 +1,14 @@
 IsTrustedSequencer = true
 
+[EigenDA]
+	RPC = "http://alt-da-eigenda-sidecar:4242"
+	
 [Log]
 Environment = "development" # "production" or "development"
 Level = "debug"
 Outputs = ["stderr"]
 
-[State]
+[State] 
 	[State.DB]
 	User = "state_user"
 	Password = "state_password"

@@ -1,4 +1,3 @@
-version: "3.5"
 networks:
   default:
     name: zkevm
@@ -254,6 +253,16 @@ services:
       - "-c"
       - "/app/zkevm-node run --network custom --custom-network-file /app/genesis.json --cfg /app/config.toml --components eth-tx-manager"
 
+  alt-da-eigenda-sidecar:
+    container_name: alt-da-eigenda-sidecar
+    image: eigenda-proxy
+    environment:
+      - EIGENDA_PROXY_ADDR=0.0.0.0
+      - EIGENDA_PROXY_PORT=4242
+      - MEMSTORE_ENABLED=true
+    ports:
+      - 4242:4242
+
   zkevm-eth-tx-manager-v1tov2:
     container_name: zkevm-eth-tx-manager-v1tov2
     image: zkevm-node
@@ -385,6 +394,7 @@ services:
       - "mix do ecto.create, ecto.migrate; mix phx.server"
 
   zkevm-explorer-l1-db:
+    platform: linux/amd64
     container_name: zkevm-explorer-l1-db
     image: postgres:15
     ports:
@@ -399,6 +409,7 @@ services:
       - "500"
 
   zkevm-explorer-l2:
+    platform: linux/amd64
     container_name: zkevm-explorer-l2
     image: hermeznetwork/zkevm-explorer:latest
     ports:
@@ -452,8 +463,9 @@ services:
     command: [ "postgres", "-N", "500" ]
 
   zkevm-mock-l1-network:
-    container_name: zkevm-mock-l1-network
-    image: 0xpolygon/cdk-validium-contracts:forkId8
+    platform: linux/amd64
+    image: hermeznetwork/geth-zkevm-contracts:eigenda
+    pull_policy: if_not_present
     ports:
       - 8545:8545
       - 8546:8546
@@ -512,6 +524,7 @@ services:
       - "--rpc.allow-unprotected-txs"
 
   zkevm-prover:
+    platform: linux/amd64
     container_name: zkevm-prover
     image: hermeznetwork/zkevm-prover:v6.0.0
     ports:
@@ -603,6 +616,7 @@ services:
       - "/app/zkevm-node run --network custom --custom-network-file /app/genesis.json --cfg /app/config.toml --components \"rpc,synchronizer\""
 
   zkevm-permissionless-prover:
+    platform: linux/amd64
     container_name: zkevm-permissionless-prover
     image: hermeznetwork/zkevm-prover:v6.0.0
     ports:
@@ -610,6 +624,8 @@ services:
       - 50059:50052 # Mock prover
       - 50068:50061 # MT
       - 50078:50071 # Executor
+    environment:
+      - EXPERIMENTAL_DOCKER_DESKTOP_FORCE_QEMU=1
     volumes:
       - ./config/test.permissionless.prover.config.json:/usr/src/app/config.json
     command: >
