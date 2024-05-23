@@ -255,17 +255,11 @@ services:
 
   alt-da-eigenda-sidecar:
     container_name: alt-da-eigenda-sidecar
-    image: eigenda-sidecar
+    image: eigenda-proxy
     environment:
-      - EIGEN_PLASMA_SERVER_ADDR=0.0.0.0
-      - EIGEN_PLASMA_SERVER_PORT=4242
-      - EIGEN_PLASMA_SERVER_EIGENDA_KZG_G1_PATH=/app/g1.point
-      - EIGEN_PLASMA_SERVER_EIGENDA_G2_TAU_PATH=/app/g2.point.powerOf2
-      - EIGEN_PLASMA_SERVER_EIGENDA_CACHE_PATH=SRSTables
-      - EIGEN_PLASMA_SERVER_EIGENDA_RPC=disperser-holesky.eigenda.xyz:443
-      - EIGEN_PLASMA_SERVER_EIGENDA_GRPC_USE_TLS=true
-      - EIGEN_PLASMA_SERVER_EIGENDA_STATUS_QUERY_TIMEOUT=45m
-      - EIGEN_PLASMA_SERVER_EIGENDA_STATUS_QUERY_INTERVAL=10s
+      - EIGENDA_PROXY_ADDR=0.0.0.0
+      - EIGENDA_PROXY_PORT=4242
+      - MEMSTORE_ENABLED=true
     ports:
       - 4242:4242
 
@@ -630,6 +624,8 @@ services:
       - 50059:50052 # Mock prover
       - 50068:50061 # MT
       - 50078:50071 # Executor
+    environment:
+      - EXPERIMENTAL_DOCKER_DESKTOP_FORCE_QEMU=1
     volumes:
       - ./config/test.permissionless.prover.config.json:/usr/src/app/config.json
     command: >

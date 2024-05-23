@@ -2,10 +2,15 @@ package eigenda
 
 import (
 	"context"
+	"errors"
 
 	"github.com/0xPolygonHermez/zkevm-node/log"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/rlp"
+)
+
+var (
+	ErrInvalidSequence = errors.New("invalid sequence fetched from EigenDA")
 )
 
 type EigenDA struct {
@@ -17,12 +22,35 @@ func (m EigenDA) Init() error {
 	return nil
 }
 
-// GetSequence ...
-func (m EigenDA) GetSequence(ctx context.Context, batchHashes []common.Hash, dataAvailabilityMessage []byte) ([][]byte, error) {
+// EncodeVersion ... Encodes version byte to the commit
+func EncodeVersion(rawCommit []byte, version uint8) []byte {
+	ver := make([]byte, 1)
+	ver[0] = version
+
+	return append(ver, rawCommit...)
+}
+
+// DecodeVersion ... Decodes version byte from the commit
+func DecodeVersion(rawCommit []byte) (uint8, []byte) {
+	ver := rawCommit[0]
+	rawCommit = rawCommit[1:]
+
+	return ver, rawCommit
+
+}
+
+// GetSequence ... Fetches the sequence of batches associated with some commit from EigenDA
+func (m EigenDA) GetSequence(ctx context.Context, batchHashes []common.Hash, commit []byte) ([][]byte, error) {
 	log.Debug("Getting sequence from EigenDA", "batches", len(batchHashes))
 	daClient := NewDAClient(m.RPC)
 
-	b, err := daClient.GetInput(ctx, dataAvailabilityMessage)
+	// decode version
+	_, commit = DecodeVersion(commit)
+
+	// append 0x1 to the commit for server side encoding compatibility
+	commit = append([]byte{0x1}, commit...)
+
+	b, err := daClient.GetInput(ctx, commit)
 	if err != nil {
 		return nil, err
 	}
@@ -43,12 +71,19 @@ func (m EigenDA) GetSequence(ctx context.Context, batchHashes []common.Hash, dat
 func (m EigenDA) PostSequence(ctx context.Context, batchesData [][]byte) ([]byte, error) {
 	log.Debug("Sending sequence to EigenDA", "batches", len(batchesData))
 	daClient := NewDAClient(m.RPC)
-	// rlp encode 2d byte array
 
+	// rlp encode to bytes
 	b, err := rlp.EncodeToBytes(batchesData)
 	if err != nil {
 		return nil, err
 	}
 
-	return daClient.SetInput(ctx, b)
+	// post the data to EigenDA
+	rawCommit, err := daClient.SetInput(ctx, b)
+	if err != nil {
+		return nil, err
+	}
+
+	// encode version to the rawCommit for posting on-chain
+	return EncodeVersion(rawCommit, 1), nil
 }
