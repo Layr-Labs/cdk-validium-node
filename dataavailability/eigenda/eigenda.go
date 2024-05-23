@@ -3,6 +3,7 @@ package eigenda
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/0xPolygonHermez/zkevm-node/log"
 	"github.com/ethereum/go-ethereum/common"
@@ -48,7 +49,7 @@ func DecodeVersion(rawCommit []byte) ([]byte, error) {
 
 // GetSequence ... Fetches the sequence of batches associated with some commit from EigenDA
 func (m EigenDA) GetSequence(ctx context.Context, batchHashes []common.Hash, commit []byte) ([][]byte, error) {
-	log.Debug("Getting sequence from EigenDA", "batches", len(batchHashes))
+	log.Debug(fmt.Sprintf("Getting sequence of %d batches to EigenDA", len(batchHashes)))
 	daClient := NewDAClient(m.RPC)
 
 	// decode version
@@ -79,7 +80,7 @@ func (m EigenDA) GetSequence(ctx context.Context, batchHashes []common.Hash, com
 
 // PostSequence ...
 func (m EigenDA) PostSequence(ctx context.Context, batchesData [][]byte) ([]byte, error) {
-	log.Debug("Sending sequence to EigenDA", "batches", len(batchesData))
+	log.Debug(fmt.Sprintf("Sending sequence of %d batches to EigenDA", len(batchesData)))
 	daClient := NewDAClient(m.RPC)
 
 	// rlp encode to bytes
