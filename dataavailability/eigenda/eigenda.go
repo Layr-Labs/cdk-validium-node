@@ -9,6 +9,10 @@ import (
 	"github.com/ethereum/go-ethereum/rlp"
 )
 
+const (
+	EigenDAV1 = 1
+)
+
 var (
 	ErrInvalidSequence = errors.New("invalid sequence fetched from EigenDA")
 )
@@ -24,18 +28,21 @@ func (m EigenDA) Init() error {
 
 // EncodeVersion ... Encodes version byte to the commit
 func EncodeVersion(rawCommit []byte, version uint8) []byte {
-	ver := make([]byte, 1)
+	ver := make([]byte, EigenDAV1)
 	ver[0] = version
 
 	return append(ver, rawCommit...)
 }
 
 // DecodeVersion ... Decodes version byte from the commit
-func DecodeVersion(rawCommit []byte) (uint8, []byte) {
-	ver := rawCommit[0]
+func DecodeVersion(rawCommit []byte) ([]byte, error) {
+	if len(rawCommit) == 0 {
+		return nil, errors.New("commit is empty")
+	}
+
 	rawCommit = rawCommit[1:]
 
-	return ver, rawCommit
+	return rawCommit, nil
 
 }
 
@@ -45,7 +52,10 @@ func (m EigenDA) GetSequence(ctx context.Context, batchHashes []common.Hash, com
 	daClient := NewDAClient(m.RPC)
 
 	// decode version
-	_, commit = DecodeVersion(commit)
+	commit, err := DecodeVersion(commit)
+	if err != nil {
+		return nil, err
+	}
 
 	// append 0x1 to the commit for server side encoding compatibility
 	commit = append([]byte{0x1}, commit...)
@@ -85,5 +95,5 @@ func (m EigenDA) PostSequence(ctx context.Context, batchesData [][]byte) ([]byte
 	}
 
 	// encode version to the rawCommit for posting on-chain
-	return EncodeVersion(rawCommit, 1), nil
+	return EncodeVersion(rawCommit, EigenDAV1), nil
 }
